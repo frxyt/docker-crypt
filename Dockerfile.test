@@ -1,0 +1,15 @@
+FROM alpine:latest AS source
+COPY ./ /app/
+
+FROM frxyt/crypt:latest AS encrypt
+COPY --from=source /app /app
+RUN echo "mypassword" > password
+RUN encrypt
+
+FROM frxyt/crypt:latest AS decrypt
+COPY --from=encrypt /work/encrypted /work/encrypted
+RUN echo "mypassword" > password
+RUN decrypt
+
+FROM alpine:latest AS final
+COPY --from=decrypt /app /app

@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Copyright (c) 2022 FEROX YT EIRL, www.ferox.yt <devops@ferox.yt>
+# Copyright (c) 2022 Jérémy WALTHER <jeremy.walther@golflima.net>
+# See <https://github.com/frxyt/docker-crypt> for details.
+
+set -e;
+
+if [[ "${FRX_DEBUG}" == "1" ]]; then
+    set -x;
+fi
+
+tar -cvzf compressed.tar.gz ${1:-/app}
+openssl aes-256-cbc -e -salt -kfile ${2:-/work/password} -pbkdf2 -iter 10 -in compressed.tar.gz -out encrypted
+rm -f compressed.tar.gz
+stat encrypted
